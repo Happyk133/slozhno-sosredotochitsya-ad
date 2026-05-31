@@ -1,17 +1,7 @@
-(function initTheme() {
-  const theme = localStorage.getItem('theme');
-  if (theme) {
-    setTheme(theme);
-  }
-})();
-
 document.addEventListener('DOMContentLoaded', () => {
-  const currentTheme = [...document.documentElement.classList]
-    .find((cn) => cn.startsWith('theme-'))
-    ?.replace('theme-', '');
-  const themeButtons = [
-    ...document.querySelectorAll('.header__theme-menu-button'),
-  ];
+  const themeButtons = [...document.querySelectorAll('.header__theme-menu-button')];
+  const currentTheme = localStorage.getItem('theme') || 'auto';
+  setTheme(currentTheme);
   setActiveButton(themeButtons, currentTheme);
 
   themeButtons.forEach((button) => {
@@ -26,8 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setTheme(theme) {
-  document.documentElement.className = '';
-  document.documentElement.classList.add(`theme-${theme}`);
+  document.body.className = 'page';
+  if (theme === 'auto') {
+    localStorage.setItem('theme', theme);
+    return;
+  }
+  document.body.classList.add(`theme_${theme}`);
   localStorage.setItem('theme', theme);
 }
 
@@ -46,7 +40,9 @@ function setActiveButton(buttonsArray, theme) {
     const autoButton = document.querySelector(
       '.header__theme-menu-button_type_auto'
     );
-    autoButton.classList.add('header__theme-menu-button_active');
-    autoButton.setAttribute('disabled', true);
+    if (autoButton) {
+      autoButton.classList.add('header__theme-menu-button_active');
+      autoButton.setAttribute('disabled', true);
+    }
   }
 }
